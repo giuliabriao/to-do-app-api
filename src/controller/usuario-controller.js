@@ -1,8 +1,12 @@
-const routeUser = 'user';
-
 function userController(app){
-app.get(`/${routeUser}`, (req, res) => {
-    res.send(`Rota ativada com GET e recurso ${routeUser}: valores de ${routeUser} devem ser retornados.`) //aqui poderia ser passado um objeto!!
+app.get("/user", (req, resp) => {
+    resp.send(`Rota ativada com GET e recurso user: valores de user devem ser retornados. Rastreamento da aplicação usando nodemon`) //aqui poderia ser passado um objeto!!
+    });
+
+app.post("/user", (req, resp) => {
+    console.log('[INFO] chegou um post aqui');
+    // res.send(`Rota ativada com POST e recurso user: valores de user devem ser retornados. Rastreamento da aplicação usando nodemon`) //aqui poderia ser passado um objeto!!
+    resp.send(req.body);
     });
 };
 

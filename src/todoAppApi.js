@@ -1,6 +1,12 @@
+// Express v4.16.0 and higher
+// --------------------------
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
 const port = 3000;
+
+app.use(bodyParser.json());
 
 const taskController = require('./controller/tarefa-controller');
 const userController = require('./controller/usuario-controller');
