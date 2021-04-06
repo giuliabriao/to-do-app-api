@@ -2,17 +2,24 @@
 // --------------------------
 const express = require('express');
 const bodyParser = require('body-parser');
+const bd = require("./infra/bd");
 
 const app = express();
 const port = 3000;
+
+//COLOCAR O MIDDLEWARE AQUI
+
+// app.use(function(req, re, next){
+  
+// })
 
 app.use(bodyParser.json());
 
 const taskController = require('./controller/tarefa-controller');
 const userController = require('./controller/usuario-controller');
 
-userController(app);
-taskController(app);
+userController(app, bd);
+taskController(app, bd);
 
 //esse listen escuta a porta que ele fica escutando uma callback
 app.listen(port, () => {

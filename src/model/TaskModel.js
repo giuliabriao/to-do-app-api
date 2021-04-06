@@ -1,8 +1,8 @@
 class TaskModel{
-    constructor(id, title, descricao, status, date){
+    constructor(id, title, description, status, date){
         this._id = id,
         this._title = title,
-        this._descricao = descricao,
+        this._description = description,
         this._status = status,
         this._date = date
     };
@@ -15,8 +15,8 @@ class TaskModel{
         return this._title;
     };
 
-    get descricao(){
-        return this._descricao;
+    get description(){
+        return this._description;
     };
 
     get status(){
@@ -27,3 +27,5 @@ class TaskModel{
         return this._date;
     };
 };
+
+module.exports = TaskModel;
