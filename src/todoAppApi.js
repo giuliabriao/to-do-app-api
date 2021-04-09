@@ -2,7 +2,8 @@
 // --------------------------
 const express = require('express');
 const bodyParser = require('body-parser');
-const bd = require("./infra/bd");
+// const bd = require("./infra/bd");
+const bd = require('./infra/sqlite-db')
 
 const app = express();
 const port = 3000;

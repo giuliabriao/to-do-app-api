@@ -1,26 +1,71 @@
 const UserModel = require("../model/UserModel");
 
+function userController(app, bd) {
+    app.get("/user", (req, resp) => {
 
-function userController(app, bd){
-app.get("/user", (req, resp) => {
-
-    const users = bd.users
-    resp.send(users) //aqui poderia ser passado um objeto!!
+        bd.all("SELECT * FROM USUARIOS", function(err, rows){
+            if(err){
+                throw new Error(`Erro ao rodar consulta: ${err}`)
+            }else{
+                // const users = bd.users
+                console.log(rows);
+                resp.send(rows) //aqui poderia ser passado um objeto!!
+            };
+        });
     });
 
-app.post("/user", (req, resp) => {
+    app.get("/user/:email", (req, resp) => {
 
-    const body = req.body;
-    let user = new UserModel(body.id, body.name, body.email, body.password);
+        const users = bd.users;
+        const email = req.params.email;
 
-    if(body.id && body.name && body.email && body.password){
-        bd.users.push(user);
+        const user = users.find(user => user.email == email)
         
-        console.log(JSON.stringify(user));
-        resp.send(user); //essa parte retorna o que foi criado de forma a entender que deu bom
+        resp.send(user) //aqui poderia ser passado um objeto!!
+    });
+
+    app.post("/user", (req, resp) => {
+
+        const body = req.body;
+        let user = new UserModel(body.id, body.name, body.email, body.password);
+
+        if (body.id && body.name && body.email && body.password) {
+            bd.users.push(user);
+
+            console.log(JSON.stringify(user));
+            resp.send(user); //essa parte retorna o que foi criado de forma a entender que deu bom
         };
+
+        resp.send("Deu ruim!");
+    });
+
+    app.delete('/user/:email', (req, resp) => {
         
-    resp.send("Deu ruim!");
+        const users = bd.users;
+        const email = req.params.email;
+
+        for(let i = 0; i < users.length; i++){
+            if(email === users[i].email){
+                users.splice(i, 1);
+            };
+        };
+
+        resp.send(`{"Mensagem: "<${email} deletado}`)
+    });
+
+    app.put('/user/:email', (req, resp) => {
+        
+        const body = req.body.email;
+        let users = bd.users;
+        const email = req.params.email;
+
+        for(let i = 0; i < users.length; i++){
+            if(email === users[i].email){
+                users = body;
+            };
+        };
+
+        resp.send(`{"Mensagem: "<${email} atualizado}`)
     });
 };
 

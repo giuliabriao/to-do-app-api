@@ -19,7 +19,7 @@ function taskController(app, bd) {
       res.send(task); //essa parte retorna o que foi criado de forma a entender que deu bom
     };
 
-    resp.send("Deu ruim!");
+    res.send("Deu ruim!");
   });
 };
 
