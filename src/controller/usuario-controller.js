@@ -1,71 +1,52 @@
 const UserModel = require("../model/UserModel");
+const UsersDAO = require("../DAO/users-dao");
 
-function userController(app, bd) {
-    app.get("/user", (req, resp) => {
+function userController(app, db) {
+    const userDAO = new UsersDAO(db);
 
-        bd.all("SELECT * FROM USUARIOS", function(err, rows){
-            if(err){
-                throw new Error(`Erro ao rodar consulta: ${err}`)
-            }else{
-                // const users = bd.users
-                console.log(rows);
-                resp.send(rows) //aqui poderia ser passado um objeto!!
-            };
-        });
+    app.get('/users', (req, res) => {
+
+        userDAO.listUsers()
+            .then(users => res.send(users))
+            .catch(error => res.send(error))
     });
 
-    app.get("/user/:email", (req, resp) => {
+    app.get('/users/:id', (req, res) => {
 
-        const users = bd.users;
-        const email = req.params.email;
-
-        const user = users.find(user => user.email == email)
-        
-        resp.send(user) //aqui poderia ser passado um objeto!!
+        userDAO.listUserById(req.params.id)
+            .then(users => res.send(users))
+            .catch(error => res.send(error))
     });
 
-    app.post("/user", (req, resp) => {
-
+    app.post('/users', (req, res) => {
         const body = req.body;
-        let user = new UserModel(body.id, body.name, body.email, body.password);
 
-        if (body.id && body.name && body.email && body.password) {
-            bd.users.push(user);
+        const userModel = new UserModel(0, body.name, body.email, body.password);
 
-            console.log(JSON.stringify(user));
-            resp.send(user); //essa parte retorna o que foi criado de forma a entender que deu bom
-        };
+        userDAO.insertUser(userModel)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
 
-        resp.send("Deu ruim!");
     });
 
-    app.delete('/user/:email', (req, resp) => {
-        
-        const users = bd.users;
-        const email = req.params.email;
+    app.put('/users/:id', (req, res) => {
+        const body = req.body;
+        const id = req.params.id;
+        const userModel = new UserModel(0, body.name, body.email, body.password);
 
-        for(let i = 0; i < users.length; i++){
-            if(email === users[i].email){
-                users.splice(i, 1);
-            };
-        };
+        userDAO.updateUser(id, userModel)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
 
-        resp.send(`{"Mensagem: "<${email} deletado}`)
     });
 
-    app.put('/user/:email', (req, resp) => {
-        
-        const body = req.body.email;
-        let users = bd.users;
-        const email = req.params.email;
+    app.delete('/users/:id', (req, res) => {
+        const id = req.params.id;
 
-        for(let i = 0; i < users.length; i++){
-            if(email === users[i].email){
-                users = body;
-            };
-        };
+        userDAO.deleteUser(id)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
 
-        resp.send(`{"Mensagem: "<${email} atualizado}`)
     });
 };
 

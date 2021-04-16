@@ -1,26 +1,53 @@
 const TaskModel = require("../model/TaskModel");
+const TasksDAO = require("../DAO/tasks-dao");
 
-function taskController(app, bd) {
-  app.get("/task", (req, res) => {
+function taskController(app, db) {
+    const tasksDAO = new TasksDAO(db);
 
-    const tasks = bd.tasks
-    res.send(tasks)
-    // res.send(`Rota ativada com GET e recurso task: valores de task devem ser retornados.`) //aqui poderia ser passado um objeto!!
-  });
+    app.get('/tasks', (req, res) => {
 
-  app.post("/task", (req, res) => {
-    const body = req.body;
-    let task = new TaskModel(body.id, body.title, body.description, body.status, body.date);
+        tasksDAO.listTasks()
+            .then(tasks => res.send(tasks))
+            .catch(error => res.send(error))
+    });
 
-    if (body.id && body.title && body.description && body.status && body.date) {
-      bd.tasks.push(task);
+    app.get('/tasks/:id', (req, res) => {
 
-      console.log(JSON.stringify(task));
-      res.send(task); //essa parte retorna o que foi criado de forma a entender que deu bom
-    };
+        tasksDAO.listTaskById(req.params.id)
+            .then(tasks => res.send(tasks))
+            .catch(error => res.send(error))
+    });
 
-    res.send("Deu ruim!");
-  });
+    app.post('/tasks', (req, res) => {
+        const body = req.body;
+
+        const taskModel = new TaskModel(0, body.title, body.description, body.status, body.date, body.id_user);
+
+        tasksDAO.insertTask(taskModel)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
+
+    });
+
+    app.put('/tasks/:id', (req, res) => {
+        const body = req.body;
+        const id = req.params.id;
+        const taskModel = new TaskModel(0, body.title, body.description, body.status, body.date, body.id_user);
+
+        tasksDAO.updateTask(id, taskModel)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
+
+    });
+
+    app.delete('/tasks/:id', (req, res) => {
+        const id = req.params.id;
+
+        tasksDAO.deleteTask(id)
+            .then(result => res.send(result))
+            .catch(error => res.send(error))
+
+    });
 };
 
 module.exports = taskController;
