@@ -1,5 +1,6 @@
 const UserModel = require("../model/UserModel");
 const UsersDAO = require("../DAO/users-dao");
+const validateUserID = require("../middleware/validateUserID");
 
 async function userController(app, db) {
     const userDAO = new UsersDAO(db);
@@ -11,26 +12,17 @@ async function userController(app, db) {
         } catch (error) {
             res.status(503).send({"message": error});
         }
-
-        // userDAO.listUsers()
-        //     .then(users => res.send(users))
-        //     .catch(error => res.send(error))
     });
 
-    app.get('/users/:id', async (req, res) => {
+    app.get('/users/:id', validateUserID, async (req, res) => {
         try {
             const body = req.body;
             const id = req.params.id;
+            
             const userById = await userDAO.listUserById(id);
-
-            if(!userById){
-                res.status(404).send("[ERROR] Ops, this id does not exists!");
-                return;
-            }
-
             res.send(userById);
         } catch (error) {
-            res.status(503).send({"message": error});
+            res.status(503).send({ message: error });
         }
     });
 
@@ -46,7 +38,7 @@ async function userController(app, db) {
         }
     });
 
-    app.put('/users/:id', async (req, res) => {
+    app.put('/users/:id', validateUserID, async (req, res) => {
         try {
             const body = req.body;
             const id = req.params.id;
@@ -59,7 +51,7 @@ async function userController(app, db) {
         }
     });
 
-    app.delete('/users/:id', async (req, res) => {
+    app.delete('/users/:id', validateUserID, async (req, res) => {
         try {
             const body = req.body;
             const id = req.params.id;

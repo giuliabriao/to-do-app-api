@@ -33,6 +33,7 @@ class UsersDAO {
             const sql = "SELECT * FROM USERS WHERE ID = ?";
 
             this.db.get(sql, id, (err, user) => {
+
                     if(!user){
                         resolve();
                         return;
@@ -70,6 +71,11 @@ class UsersDAO {
             const sql = "UPDATE USERS SET NAME = ?, EMAIL = ?, PASSWORD = ? WHERE ID = ?"
 
             this.db.run(sql, [user.name, user.email, user.password, id], (error) => {
+                if(!user){
+                    resolve();
+                    return;
+                }
+
                 if(error){
                     reject(error);
                 }else{
@@ -85,6 +91,7 @@ class UsersDAO {
             const sql = "DELETE FROM USERS WHERE ID = ?"
 
             this.db.run(sql, id, (error) => {
+
                 if(error){
                     reject(error);
                 }else{
@@ -95,4 +102,4 @@ class UsersDAO {
     }
 }
 
-module.exports = UsersDAO;
+module.exports = UsersDAO

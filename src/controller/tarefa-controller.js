@@ -1,5 +1,6 @@
 const TaskModel = require("../model/TaskModel");
 const TasksDAO = require("../DAO/tasks-dao");
+const validateTaskId = require("../middleware/validateTaskID");
 
 function taskController(app, db) {
     const tasksDAO = new TasksDAO(db);
@@ -12,21 +13,12 @@ function taskController(app, db) {
         } catch (error) {
             res.status(503).send({ "message": error });
         }
-
-        // tasksDAO.listTasks()
-        //     .then(tasks => res.send(tasks))
-        //     .catch(error => res.send(error))
     });
 
-    app.get('/tasks/:id', async (req, res) => {
+    app.get('/tasks/:id', validateTaskId, async (req, res) => {
         try {
             const id = req.params.id;
             const taskById = await tasksDAO.listTaskById(id);
-
-            if(!taskById){
-                res.status(404).send("[ERROR] Ops, this id does not exists!");
-                return;
-            }
             
             res.send(taskById);
 
@@ -48,7 +40,7 @@ function taskController(app, db) {
         }
     });
 
-    app.put('/tasks/:id', async (req, res) => {
+    app.put('/tasks/:id', validateTaskId, async (req, res) => {
         try {
             const body = req.body;
             const id = req.params.id;
@@ -61,7 +53,7 @@ function taskController(app, db) {
         }
     });
 
-    app.delete('/tasks/:id', async (req, res) => {
+    app.delete('/tasks/:id', validateTaskId, async (req, res) => {
         try {
             const id = req.params.id;
 

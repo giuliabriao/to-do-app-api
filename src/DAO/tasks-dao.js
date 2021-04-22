@@ -71,6 +71,11 @@ class TasksDAO {
             const sql = "UPDATE TASKS SET TITLE = ?, DESCRIPTION = ?, STATUS = ?, DATE = ?, ID_USER = ? WHERE ID = ?";
 
             this.db.run(sql, [task.title, task.description, task.status, task.date, task.id_user, id], (error) => {
+                if(!task){
+                    resolve();
+                    return
+                }
+                
                 if(error){
                     reject(error);
                 }else{
