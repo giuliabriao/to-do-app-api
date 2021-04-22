@@ -33,11 +33,16 @@ class UsersDAO {
             const sql = "SELECT * FROM USERS WHERE ID = ?";
 
             this.db.get(sql, id, (err, user) => {
+                    if(!user){
+                        resolve();
+                        return;
+                    }
+
                     if (err) {
-                        reject(err)
+                        reject(err);
                     } else {
-                        let userModel = new UserModel(user.ID, user.NAME, user.EMAIL, user.PASSWORD)
-                        resolve(userModel)
+                        let userModel = new UserModel(user.ID, user.NAME, user.EMAIL, user.PASSWORD);
+                        resolve(userModel);
                     }
                 }
             )

@@ -33,6 +33,12 @@ class TasksDAO {
             const sql = "SELECT * FROM TASKS WHERE ID = ?";
 
             this.db.get(sql, id, (err, task) => {
+
+                    if(!task){
+                        resolve();
+                        return
+                    }
+
                     if (err) {
                         reject(err)
                     } else {

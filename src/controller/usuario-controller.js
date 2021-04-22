@@ -1,52 +1,74 @@
 const UserModel = require("../model/UserModel");
 const UsersDAO = require("../DAO/users-dao");
 
-function userController(app, db) {
+async function userController(app, db) {
     const userDAO = new UsersDAO(db);
 
-    app.get('/users', (req, res) => {
+    app.get('/users', async (req, res) => {
+        try {
+            const usersGet = await userDAO.listUsers();
+            res.send(usersGet); 
+        } catch (error) {
+            res.status(503).send({"message": error});
+        }
 
-        userDAO.listUsers()
-            .then(users => res.send(users))
-            .catch(error => res.send(error))
+        // userDAO.listUsers()
+        //     .then(users => res.send(users))
+        //     .catch(error => res.send(error))
     });
 
-    app.get('/users/:id', (req, res) => {
+    app.get('/users/:id', async (req, res) => {
+        try {
+            const body = req.body;
+            const id = req.params.id;
+            const userById = await userDAO.listUserById(id);
 
-        userDAO.listUserById(req.params.id)
-            .then(users => res.send(users))
-            .catch(error => res.send(error))
+            if(!userById){
+                res.status(404).send("[ERROR] Ops, this id does not exists!");
+                return;
+            }
+
+            res.send(userById);
+        } catch (error) {
+            res.status(503).send({"message": error});
+        }
     });
 
-    app.post('/users', (req, res) => {
-        const body = req.body;
+    app.post('/users', async (req, res) => {
+        try {
+            const body = req.body;
+            const userModel = new UserModel(0, body.name, body.email, body.password);
 
-        const userModel = new UserModel(0, body.name, body.email, body.password);
-
-        userDAO.insertUser(userModel)
-            .then(result => res.send(result))
-            .catch(error => res.send(error))
-
+            const usersPost = await userDAO.insertUser(userModel);
+            res.send(usersPost);
+        } catch (error) {
+            res.status(503).send({"message": error});
+        }
     });
 
-    app.put('/users/:id', (req, res) => {
-        const body = req.body;
-        const id = req.params.id;
-        const userModel = new UserModel(0, body.name, body.email, body.password);
+    app.put('/users/:id', async (req, res) => {
+        try {
+            const body = req.body;
+            const id = req.params.id;
+            const userModel = new UserModel(0, body.name, body.email, body.password);
 
-        userDAO.updateUser(id, userModel)
-            .then(result => res.send(result))
-            .catch(error => res.send(error))
-
+            let usersPut = await userDAO.updateUser(id, userModel);
+            res.send(usersPut);
+        } catch (error) {
+            res.status(503).send({"message": error});
+        }
     });
 
-    app.delete('/users/:id', (req, res) => {
-        const id = req.params.id;
+    app.delete('/users/:id', async (req, res) => {
+        try {
+            const body = req.body;
+            const id = req.params.id;
 
-        userDAO.deleteUser(id)
-            .then(result => res.send(result))
-            .catch(error => res.send(error))
-
+            const usersDelete = await userDAO.deleteUser(id);
+            res.send(usersDelete);
+        } catch (error) {
+            res.status(503).send({"message": error});
+        }
     });
 };
 
