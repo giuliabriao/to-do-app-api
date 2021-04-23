@@ -2,6 +2,7 @@
 
 ## Este projeto de fim de módulo consiste numa API de usuários e tarefas para um app de ToDo
 <br>
+
 ### 🔎 <strong>Instalando as dependências</strong>
 
 Primeiramente deve-se clonar o repositório para sua máquina, com o seguinte comando no Git:
